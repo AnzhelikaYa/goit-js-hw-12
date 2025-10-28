@@ -57,6 +57,7 @@ async function onFormSubmit(evt) {
           "Sorry, there are no images matching your search query. Please try again!",
         position: "topRight",
       });
+      hideLoadMoreButton();
       return;
     }
 
@@ -87,6 +88,7 @@ async function onFormSubmit(evt) {
 }
 
 async function onLoadMore() {
+  hideLoadMoreButton();
   page += 1;
   showLoader();
 
