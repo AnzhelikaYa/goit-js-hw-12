@@ -21,6 +21,9 @@ let currentQuery = "";
 let page = 1;
 let totalHits = 0;
 
+// ❗️ При старті сторінки одразу приховуємо кнопку
+hideLoadMoreButton();
+
 form.addEventListener("submit", onFormSubmit);
 loadMoreBtn.addEventListener("click", onLoadMore);
 
@@ -37,7 +40,6 @@ async function onFormSubmit(evt) {
     return;
   }
 
- 
   currentQuery = query;
   page = 1;
   totalHits = 0;
@@ -62,7 +64,6 @@ async function onFormSubmit(evt) {
 
     createGallery(data.hits);
 
-   
     if (page * PER_PAGE < totalHits) {
       showLoadMoreButton();
     } else {
@@ -82,12 +83,13 @@ async function onFormSubmit(evt) {
     console.error(error);
   } finally {
     hideLoader();
-    form.reset();
   }
 }
 
 async function onLoadMore() {
+ 
   hideLoadMoreButton();
+  loadMoreBtn.disabled = true;
   page += 1;
   showLoader();
 
@@ -97,18 +99,16 @@ async function onLoadMore() {
     if (data.hits && data.hits.length > 0) {
       createGallery(data.hits);
 
+    
       const firstCard = galleryContainer.querySelector(".gallery-item");
       if (firstCard) {
         const { height } = firstCard.getBoundingClientRect();
-    
         window.scrollBy({
           top: height * 2,
           behavior: "smooth",
         });
       }
     }
-
-
     if (page * PER_PAGE >= (data.totalHits ?? totalHits)) {
       hideLoadMoreButton();
       iziToast.info({
@@ -128,5 +128,6 @@ async function onLoadMore() {
     console.error(error);
   } finally {
     hideLoader();
+    loadMoreBtn.disabled = false;
   }
 }
