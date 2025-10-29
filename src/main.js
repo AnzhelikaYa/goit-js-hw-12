@@ -15,13 +15,13 @@ import "izitoast/dist/css/iziToast.min.css";
 
 const form = document.querySelector(".form");
 const input = form.querySelector("input[name='search-text']");
+const submitBtn = form.querySelector("button[type='submit']");
 const { loadMoreBtn, galleryContainer } = refs;
 
 let currentQuery = "";
 let page = 1;
 let totalHits = 0;
 
-// ❗️ При старті сторінки одразу приховуємо кнопку
 hideLoadMoreButton();
 
 form.addEventListener("submit", onFormSubmit);
@@ -47,6 +47,9 @@ async function onFormSubmit(evt) {
   clearGallery();
   hideLoadMoreButton();
   showLoader();
+
+  submitBtn.disabled = true;
+  input.disabled = true;
 
   try {
     const data = await getImagesByQuery(currentQuery, page);
@@ -83,11 +86,12 @@ async function onFormSubmit(evt) {
     console.error(error);
   } finally {
     hideLoader();
+    submitBtn.disabled = false;
+    input.disabled = false;
   }
 }
 
 async function onLoadMore() {
- 
   hideLoadMoreButton();
   loadMoreBtn.disabled = true;
   page += 1;
@@ -99,7 +103,7 @@ async function onLoadMore() {
     if (data.hits && data.hits.length > 0) {
       createGallery(data.hits);
 
-    
+      // Прокрутка після підвантаження
       const firstCard = galleryContainer.querySelector(".gallery-item");
       if (firstCard) {
         const { height } = firstCard.getBoundingClientRect();
@@ -109,6 +113,7 @@ async function onLoadMore() {
         });
       }
     }
+
     if (page * PER_PAGE >= (data.totalHits ?? totalHits)) {
       hideLoadMoreButton();
       iziToast.info({
