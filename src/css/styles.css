@@ -125,7 +125,7 @@
 }
 
 .load-more {
-  display: block;
+  display: none;
   margin: 32px 500px;
   padding: 8px 16px;
   font-size: 16px;
@@ -142,7 +142,7 @@
 }
 
 .load-more.visible {
-  display: inline-block;
+  display: block;
 }
 
 .gallery {
